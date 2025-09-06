@@ -27,10 +27,12 @@ import org.springframework.data.domain.Sort;
 import in.gov.egramswaraj.constant.AppConstant;
 import in.gov.egramswaraj.constant.UserContext;
 import in.gov.egramswaraj.entity.ApplicationEntity;
+import in.gov.egramswaraj.entity.GroupEntity;
 import in.gov.egramswaraj.entity.UserEntity;
 import in.gov.egramswaraj.exception.SomeUsersNotFoundException;
 import in.gov.egramswaraj.repo.ApplicationMappingRepository;
 import in.gov.egramswaraj.repo.ApplicationRepository;
+import in.gov.egramswaraj.repo.GroupRepository;
 import in.gov.egramswaraj.repo.UserRepository;
 import in.gov.egramswaraj.request.ApplicationRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,6 +45,10 @@ class ApplicationServiceImplTest {
 	private ApplicationMappingRepository applicationMappingRepository;
 	@Mock
 	private UserRepository userRepository;
+	
+	@Mock
+	private GroupRepository groupRepository;
+	
 	@Mock
 	private ModelMapper modelMapper;
 	@Mock
@@ -53,6 +59,7 @@ class ApplicationServiceImplTest {
 
 	private ApplicationRequest request;
 	private ApplicationEntity application;
+	private GroupEntity group;
 
 	@BeforeEach
 	void setUp() {
@@ -65,6 +72,9 @@ class ApplicationServiceImplTest {
 		application.setApplicationName("Egram");
 		application.setApplicationUrl("http://egram.gov.in");
 		application.setActive(true);
+		
+		group = new GroupEntity();
+        group.setId(1L);
 	}
 
 	@Test
@@ -169,23 +179,24 @@ class ApplicationServiceImplTest {
         verify(applicationRepository).save(application);
     }
 
-	@Test
-	void testMapUsersToApplication() {
-		UserEntity user1 = new UserEntity();
-		user1.setId(10L);
-		UserEntity user2 = new UserEntity();
-		user2.setId(11L);
-		List<UserEntity> users = List.of(user1, user2);
-		List<Long> userIds = List.of(10L, 11L);
+	   @Test
+	    void testMapUsersToApplication() {
+	        UserEntity user1 = new UserEntity();
+	        user1.setId(10L);
+	        UserEntity user2 = new UserEntity();
+	        user2.setId(11L);
+	        List<UserEntity> users = List.of(user1, user2);
+	        List<Long> userIds = List.of(10L, 11L);
 
-		when(applicationRepository.findById(1L)).thenReturn(Optional.of(application));
-		when(userRepository.findAllById(userIds)).thenReturn(users);
+	        when(applicationRepository.findById(1L)).thenReturn(Optional.of(application));
+	        when(userRepository.findAllById(userIds)).thenReturn(users);
+	        when(groupRepository.findById(1L)).thenReturn(Optional.of(group));
 
-		String result = applicationServiceImpl.mapUsersToApplication(1L, userIds, 1L);
+	        String result = applicationServiceImpl.mapUsersToApplication(1L, userIds, 1L);
 
-		assertThat(result).isEqualTo(AppConstant.APPLICATION_MAPPING_STATUS);
-		verify(applicationMappingRepository).saveAll(anyList());
-	}
+	        assertThat(result).isEqualTo(AppConstant.APPLICATION_MAPPING_STATUS);
+	        verify(applicationMappingRepository).saveAll(anyList());
+	    }
 
 	@Test
 	void testMapUsersToApplicationSomeUsersNotFound() {
@@ -199,7 +210,7 @@ class ApplicationServiceImplTest {
 
 	@Test
 	void testGetAllApplications() {
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdTimestamp").descending());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdOn").descending());
 		Page<ApplicationEntity> page = new PageImpl<>(List.of(application));
 
 		when(applicationRepository.findAll(pageable)).thenReturn(page);

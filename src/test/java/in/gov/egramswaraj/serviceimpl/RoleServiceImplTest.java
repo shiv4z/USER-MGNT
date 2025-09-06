@@ -119,7 +119,7 @@ class RoleServiceImplTest {
 
 	@Test
 	void testGetAllRoles() {
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdTimestamp").descending());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdOn").descending());
 		Page<RoleEntity> mockPage = new PageImpl<>(List.of(roleEntity));
 
 		when(roleRepository.findAll(pageable)).thenReturn(mockPage);

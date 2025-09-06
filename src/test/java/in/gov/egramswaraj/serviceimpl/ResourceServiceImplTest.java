@@ -130,7 +130,7 @@ class PrivilegeServiceImplTest {
 	@Test
 	void testGetAllPrivileges() {
 		Page<PrivilegeEntity> page = new PageImpl<>(List.of(resource));
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdTimestamp").descending());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdOn").descending());
 		when(privilegeRepository.findAll(pageable)).thenReturn(page);
 
 		Page<PrivilegeEntity> result = resourceServiceImpl.getAllPrivileges(0, 10);

@@ -24,6 +24,7 @@ import in.gov.egramswaraj.entity.RoleEntity;
 import in.gov.egramswaraj.repo.PrivilegeMappingRepository;
 import in.gov.egramswaraj.repo.PrivilegeRepository;
 import in.gov.egramswaraj.repo.RoleRepository;
+import in.gov.egramswaraj.serviceimpl.PrivilegeMappingServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)

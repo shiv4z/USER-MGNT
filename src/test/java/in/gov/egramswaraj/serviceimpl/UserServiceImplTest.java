@@ -153,7 +153,7 @@ class UserServiceImplTest {
 
 	@Test
 	void testGetAllUsers() {
-		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdTimestamp").descending());
+		Pageable pageable = PageRequest.of(0, 10, Sort.by("createdOn").descending());
 		Page<UserEntity> mockPage = new PageImpl<>(List.of(user));
 
 		when(userRepository.findAll(pageable)).thenReturn(mockPage);
